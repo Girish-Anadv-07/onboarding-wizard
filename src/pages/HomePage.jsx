@@ -92,7 +92,7 @@ const HomePage = () => {
     if (!currentPage) return false;
 
     return currentPage.inputs.every((field) => {
-      const value = formValues[currentPage.id]?.[field.inputId]?.value;
+      const value = formValues[currentPage.id]?.[field.inputId]?.value?.trim();
       return value !== undefined && value !== null && value !== "";
     });
   };
@@ -110,7 +110,7 @@ const HomePage = () => {
       const uid = btoa(email);
       setUserId(uid);
 
-      await fetchAndProcessUserSubmission(uid); // Use the new helper function
+      await fetchAndProcessUserSubmission(uid);
     } else {
       const dataToSave = {
         ...formValues,
@@ -197,7 +197,7 @@ const HomePage = () => {
           alreadySubmitted={alreadySubmitted}
           activeStep={activeStep}
           handleBack={handleBack}
-          stepsLength={pages.length + 1}
+          stepsLength={pages.length + 2}
         />
         <Container maxWidth="sm" sx={{ padding: "0px 24px", mt: 10 }}>
           {alreadySubmitted ? (

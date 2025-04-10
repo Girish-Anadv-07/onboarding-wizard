@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Accordion,
   AccordionSummary,
@@ -18,11 +18,17 @@ import InputField from "./InputField";
 import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
 
 const PageAccordion = ({ page, index, updatePage, deletePage }) => {
-  const [expanded, setExpanded] = useState(false);
   const [localPage, setLocalPage] = useState(page);
   const [isEditing, setIsEditing] = useState(page.isEditing || false);
+  const [expanded, setExpanded] = useState(page.isEditing || false);
   const [loading, setLoading] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
+
+  useEffect(() => {
+    setLocalPage(page);
+    setExpanded(page.isEditing || false);
+    setIsEditing(page.isEditing || false);
+  }, [page]);
 
   const handleToggle = () => setExpanded((prev) => !prev);
 
@@ -37,8 +43,8 @@ const PageAccordion = ({ page, index, updatePage, deletePage }) => {
 
   const handleAddField = () => {
     const newField = {
-      inputId: Date.now(),
-      type: "text",
+      inputId: Date.now().toString(),
+      type: "",
       placeholder: "",
     };
     setLocalPage({
@@ -65,7 +71,7 @@ const PageAccordion = ({ page, index, updatePage, deletePage }) => {
 
     try {
       setLoading(true);
-      await updatePage({ ...localPage, isEditing: false });
+      await updatePage({ ...localPage });
       setIsEditing(false);
     } finally {
       setLoading(false);
@@ -247,7 +253,7 @@ const PageAccordion = ({ page, index, updatePage, deletePage }) => {
         loading={loading}
         onConfirm={async () => {
           setLoading(true);
-          await deletePage(localPage.id);
+          await deletePage(localPage);
           setLoading(false);
           setConfirmOpen(false);
         }}

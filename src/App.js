@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage.jsx";
-import Admin from "./pages/AdminPage.jsx";
+import AdminPage from "./pages/AdminPage.jsx";
 import DataTable from "./pages/DataTable";
 
 function App() {
@@ -8,7 +8,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/admin" element={<Admin />} />
+        <Route path="/admin" element={<AdminPage />} />
         <Route path="/data" element={<DataTable />} />
       </Routes>
     </Router>

@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Button, Container, Typography, Stack } from "@mui/material";
+import {
+  Button,
+  Container,
+  Typography,
+  Stack,
+  CircularProgress,
+} from "@mui/material";
 import PageAccordion from "../components/PageAccordion";
 import {
   fetchPagesFromFirestore,
@@ -11,22 +17,28 @@ import Header from "../components/Header";
 
 const AdminPage = () => {
   const [pages, setPages] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchPages = async () => {
       try {
+        setLoading(true);
         const data = await fetchPagesFromFirestore();
         setPages(data);
       } catch (error) {
         console.error("Error fetching pages:", error);
         setPages([]);
+      } finally {
+        setLoading(false);
       }
     };
+
     fetchPages();
   }, []);
 
   const handleAddPage = () => {
     const newPage = {
+      id: Date.now().toString(),
       heading: "",
       inputs: [],
       isEditing: true,
@@ -39,13 +51,12 @@ const AdminPage = () => {
     try {
       if (updatedPage.isNew) {
         const savedPage = await addPageToFirestore({
+          id: updatedPage.id,
           heading: updatedPage.heading,
           inputs: updatedPage.inputs,
         });
         setPages((prev) =>
-          prev.map((p) =>
-            p === updatedPage ? { ...savedPage, isEditing: false } : p
-          )
+          prev.map((p) => (p.id === updatedPage.id ? savedPage : p))
         );
       } else {
         await updatePageInFirestore(updatedPage);
@@ -58,17 +69,10 @@ const AdminPage = () => {
     }
   };
 
-  const handleDeletePage = async (pageIdOrPage) => {
+  const handleDeletePage = async (pageToBeDeleted) => {
     try {
-      if (typeof pageIdOrPage === "object" && pageIdOrPage.isNew) {
-        setPages((prev) => prev.filter((p) => p !== pageIdOrPage));
-        return;
-      }
-
-      const pageId =
-        typeof pageIdOrPage === "string" ? pageIdOrPage : pageIdOrPage.id;
-
-      await deletePageFromFirestore(pageId);
+      const pageId = pageToBeDeleted.id;
+      if (!pageToBeDeleted.isNew) await deletePageFromFirestore(pageId);
       setPages((prev) => prev.filter((p) => p.id !== pageId));
     } catch (error) {
       console.error("Error deleting page:", error);
@@ -89,15 +93,19 @@ const AdminPage = () => {
           >
             Onboarding Flow
           </Typography>
-          {pages.map((page, idx) => (
-            <PageAccordion
-              key={page.id || `page-${idx}`}
-              page={page}
-              index={idx}
-              updatePage={handleUpdatePage}
-              deletePage={() => handleDeletePage(page)}
-            />
-          ))}
+          {loading ? (
+            <CircularProgress />
+          ) : (
+            pages.map((page, idx) => (
+              <PageAccordion
+                key={page.id}
+                page={page}
+                index={idx}
+                updatePage={handleUpdatePage}
+                deletePage={handleDeletePage}
+              />
+            ))
+          )}
           <Button
             variant="contained"
             size="large"

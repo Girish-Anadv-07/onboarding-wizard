@@ -24,12 +24,8 @@ export const fetchPagesFromFirestore = async () => {
 
 export const addPageToFirestore = async (pageData) => {
   try {
-    const timestampId = Date.now().toString();
-    const docRef = doc(pagesCollection, timestampId);
-
-    await setDoc(docRef, { ...pageData, id: timestampId });
-
-    return { ...pageData, id: timestampId };
+    await setDoc(doc(pagesCollection, pageData.id), pageData);
+    return { ...pageData };
   } catch (error) {
     console.error("Error adding page to Firestore:", error);
     return null;
@@ -40,7 +36,6 @@ export const updatePageInFirestore = async (page) => {
   try {
     const { id, ...data } = page;
     const docRef = doc(pagesCollection, id);
-
     await updateDoc(docRef, data);
   } catch (error) {
     console.error("Error updating page in Firestore:", error);

@@ -13,10 +13,10 @@ const InputField = ({ field, onChange, onDelete }) => {
     <Stack direction="row" spacing={2} alignItems="center">
       <TextField
         select
-        label="Type"
+        label="Input Field Type"
         value={field.type}
         onChange={(e) => onChange(field.inputId, "type", e.target.value)}
-        sx={{ width: 200 }}
+        sx={{ width: 300 }}
       >
         {INPUT_TYPES.map((type) => (
           <MenuItem key={type.value} value={type.value}>

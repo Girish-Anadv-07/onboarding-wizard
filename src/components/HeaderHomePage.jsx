@@ -5,15 +5,38 @@ import {
   Stack,
   Stepper,
   Step,
-  StepLabel,
 } from "@mui/material";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import StepConnector, {
   stepConnectorClasses,
 } from "@mui/material/StepConnector";
-import PropTypes from "prop-types";
 import { styled } from "@mui/material/styles";
+
+const QontoConnector = styled(StepConnector)(({ theme }) => ({
+  [`&.${stepConnectorClasses.alternativeLabel}`]: {
+    top: 10,
+    left: "calc(-50% + 16px)",
+    right: "calc(50% + 16px)",
+  },
+  [`&.${stepConnectorClasses.active}`]: {
+    [`& .${stepConnectorClasses.line}`]: {
+      borderColor: "rgb(138, 205, 160)",
+    },
+  },
+  [`&.${stepConnectorClasses.completed}`]: {
+    [`& .${stepConnectorClasses.line}`]: {
+      borderColor: "rgb(138, 205, 160)",
+    },
+  },
+  [`& .${stepConnectorClasses.line}`]: {
+    borderColor: "#eaeaf0",
+    borderTopWidth: 8,
+    borderRadius: 4,
+    ...theme.applyStyles("dark", {
+      borderColor: theme.palette.grey[800],
+    }),
+  },
+}));
 
 const HeaderHomePage = ({
   alreadySubmitted,
@@ -76,99 +99,18 @@ const HeaderHomePage = ({
           alternativeLabel
           activeStep={activeStep}
           connector={<QontoConnector />}
+          style={{
+            marginLeft: `${1500 / stepsLength}px`,
+            marginRight: `${1500 / stepsLength}px`,
+          }}
         >
           {Array.from({ length: stepsLength }).map((_, i) => (
-            <Step key={i}>
-              <StepLabel slots={{ stepIcon: QontoStepIcon }} />
-            </Step>
+            <Step key={i} />
           ))}
         </Stepper>
       </AppBar>
     </>
   );
-};
-
-const QontoConnector = styled(StepConnector)(({ theme }) => ({
-  [`&.${stepConnectorClasses.alternativeLabel}`]: {
-    top: 10,
-    left: "calc(-50% + 16px)",
-    right: "calc(50% + 16px)",
-  },
-  [`&.${stepConnectorClasses.active}`]: {
-    [`& .${stepConnectorClasses.line}`]: {
-      borderColor: "rgb(138, 205, 160)",
-    },
-  },
-  [`&.${stepConnectorClasses.completed}`]: {
-    [`& .${stepConnectorClasses.line}`]: {
-      borderColor: "rgb(138, 205, 160)",
-    },
-  },
-  [`& .${stepConnectorClasses.line}`]: {
-    borderColor: "#eaeaf0",
-    borderTopWidth: 3,
-    borderRadius: 1,
-    ...theme.applyStyles("dark", {
-      borderColor: theme.palette.grey[800],
-    }),
-  },
-}));
-
-const QontoStepIconRoot = styled("div")(({ theme }) => ({
-  color: "#eaeaf0",
-  display: "flex",
-  height: 22,
-  alignItems: "center",
-  "& .QontoStepIcon-completedIcon": {
-    color: "rgb(138, 205, 160)",
-    zIndex: 1,
-    fontSize: 18,
-  },
-  "& .QontoStepIcon-circle": {
-    width: 8,
-    height: 8,
-    borderRadius: "50%",
-    backgroundColor: "currentColor",
-  },
-  ...theme.applyStyles("dark", {
-    color: theme.palette.grey[700],
-  }),
-  variants: [
-    {
-      props: ({ ownerState }) => ownerState.active,
-      style: {
-        color: "rgb(138, 205, 160)",
-      },
-    },
-  ],
-}));
-
-function QontoStepIcon(props) {
-  const { active, completed, className } = props;
-
-  return (
-    <QontoStepIconRoot ownerState={{ active }} className={className}>
-      {completed ? (
-        <CheckCircleIcon className="QontoStepIcon-completedIcon" />
-      ) : (
-        <div className="QontoStepIcon-circle" />
-      )}
-    </QontoStepIconRoot>
-  );
-}
-
-QontoStepIcon.propTypes = {
-  /**
-   * Whether this step is active.
-   * @default false
-   */
-  active: PropTypes.bool,
-  className: PropTypes.string,
-  /**
-   * Mark the step as completed. Is passed to child components.
-   * @default false
-   */
-  completed: PropTypes.bool,
 };
 
 export default HeaderHomePage;
