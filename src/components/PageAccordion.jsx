@@ -58,13 +58,12 @@ const PageAccordion = ({ page, index, updatePage, deletePage }) => {
     setLocalPage((prevState) => ({ ...prevState, inputs: updatedInputs }));
   };
 
-  const canSavePage = React.useMemo(() => {
-    if (!localPage.heading.trim()) return false;
-    if (localPage.inputs.length === 0) return false;
-    return localPage.inputs.every(
+  const canSavePage =
+    localPage.heading.trim() &&
+    localPage.inputs.length > 0 &&
+    localPage.inputs.every(
       (input) => input.placeholder?.trim() && input.type?.trim()
     );
-  }, [localPage]);
 
   const handleSave = async () => {
     if (!canSavePage) return;
